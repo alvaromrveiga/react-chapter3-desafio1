@@ -1,1 +1,54 @@
-// TODO
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.posts {
+  max-width: 720px;
+  margin: 0 auto 0;
+
+  a {
+    display: block;
+
+    & + a {
+      margin-top: 3rem;
+    }
+
+    strong {
+      display: block;
+      font-weight: 700;
+      font-size: 1.75rem;
+    }
+
+    p {
+      color: var(--body);
+      margin-top: 0.5rem;
+      font-size: 1.125rem;
+    }
+
+    span {
+      margin-top: 1.5rem;
+      padding-right: 1.5rem;
+      font-size: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      color: var(--info);
+
+      .icon {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 0.5rem;
+        font-size: 1.25rem;
+      }
+    }
+  }
+
+  .loadButton {
+    display: block;
+    margin-top: 4rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--highlight);
+  }
+}
