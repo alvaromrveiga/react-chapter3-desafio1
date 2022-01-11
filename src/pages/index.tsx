@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GetStaticProps } from 'next';
 import Link from 'next/link';
 import Head from 'next/head';
@@ -33,6 +33,33 @@ export default function Home({ postsPagination }: HomeProps) {
   const [results, setResults] = useState(postsPagination.results);
   const [nextPage, setNextPage] = useState(postsPagination.next_page);
 
+  useEffect(() => {
+    const dateFormattedResults = results.map(post => {
+      const first_publication_date = new Date(post.first_publication_date)
+        .toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+        })
+        .replace(/de |\./g, '');
+
+      const capitalizeMonthFirstLetter = first_publication_date
+        .charAt(3)
+        .toUpperCase();
+
+      const formattedFirstPublicationDate =
+        first_publication_date.substring(0, 3) +
+        capitalizeMonthFirstLetter +
+        first_publication_date.substring(4, first_publication_date.length);
+
+      post.first_publication_date = formattedFirstPublicationDate;
+
+      return post;
+    });
+
+    setResults([...dateFormattedResults]);
+  }, [nextPage]);
+
   const handleLoadPosts = event => {
     event.preventDefault();
 
@@ -40,26 +67,9 @@ export default function Home({ postsPagination }: HomeProps) {
       .then(response => response.json())
       .then(data => {
         const newPosts = data.results.map(post => {
-          const first_publication_date = new Date(post.first_publication_date)
-            .toLocaleDateString('pt-BR', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric',
-            })
-            .replace(/de |\./g, '');
-
-          const capitalizeMonthFirstLetter = first_publication_date
-            .charAt(3)
-            .toUpperCase();
-
-          const formattedFirstPublicationDate =
-            first_publication_date.substring(0, 3) +
-            capitalizeMonthFirstLetter +
-            first_publication_date.substring(4, first_publication_date.length);
-
           return {
             uid: post.uid,
-            first_publication_date: formattedFirstPublicationDate,
+            first_publication_date: post.first_publication_date,
             data: {
               title: post.data.title,
               subtitle: post.data.subtitle,
@@ -122,26 +132,9 @@ export const getStaticProps: GetStaticProps = async () => {
   );
 
   const posts = postsResponse.results.map(post => {
-    const first_publication_date = new Date(post.first_publication_date)
-      .toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-      })
-      .replace(/de |\./g, '');
-
-    const capitalizeMonthFirstLetter = first_publication_date
-      .charAt(3)
-      .toUpperCase();
-
-    const formattedFirstPublicationDate =
-      first_publication_date.substring(0, 3) +
-      capitalizeMonthFirstLetter +
-      first_publication_date.substring(4, first_publication_date.length);
-
     return {
       uid: post.uid,
-      first_publication_date: formattedFirstPublicationDate,
+      first_publication_date: post.first_publication_date,
       data: {
         title: post.data.title,
         subtitle: post.data.subtitle,
