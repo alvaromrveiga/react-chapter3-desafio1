@@ -35,22 +35,15 @@ export default function Home({ postsPagination }: HomeProps) {
 
   useEffect(() => {
     const dateFormattedResults = results.map(post => {
-      const first_publication_date = new Date(post.first_publication_date)
+      const formattedFirstPublicationDate = new Date(
+        post.first_publication_date
+      )
         .toLocaleDateString('pt-BR', {
           day: '2-digit',
           month: 'short',
           year: 'numeric',
         })
         .replace(/de |\./g, '');
-
-      const capitalizeMonthFirstLetter = first_publication_date
-        .charAt(3)
-        .toUpperCase();
-
-      const formattedFirstPublicationDate =
-        first_publication_date.substring(0, 3) +
-        capitalizeMonthFirstLetter +
-        first_publication_date.substring(4, first_publication_date.length);
 
       post.first_publication_date = formattedFirstPublicationDate;
 
@@ -93,8 +86,8 @@ export default function Home({ postsPagination }: HomeProps) {
       <main className={commonStyles.container}>
         <div className={styles.posts}>
           {results.map(post => (
-            <Link href={`/post/${post.uid}`}>
-              <a key={post.uid}>
+            <Link key={post.uid} href={`/post/${post.uid}`}>
+              <a>
                 <strong>{post.data.title}</strong>
                 <p>{post.data.subtitle}</p>
                 <span>
