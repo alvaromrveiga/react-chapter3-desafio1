@@ -1,10 +1,11 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
+import { RiCalendarLine, RiUser3Line } from 'react-icons/ri';
+import { AiOutlineClockCircle } from 'react-icons/ai';
 import Header from '../../components/Header';
 
 import { getPrismicClient } from '../../services/prismic';
 
-import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 
 interface Post {
@@ -68,26 +69,42 @@ export default function Post({ post }: PostProps) {
   }, [post]);
 
   return (
-    <div className={commonStyles.container}>
+    <div>
       <Header />
 
       {post && (
         <>
-          <img src={post.data.banner.url} alt="banner" />
-          <h1>{post.data.title}</h1>
-          <span>{post.first_publication_date}</span>
-          <span>{post.data.author}</span>
-          <span>{readingTime} min</span>
+          <img
+            src={post.data.banner.url}
+            alt="banner"
+            className={styles.banner}
+          />
 
-          {post.data.content.map(section => (
-            <section key={section.heading}>
-              <h3>{section.heading}</h3>
+          <article className={styles.content}>
+            <h1>{post.data.title}</h1>
+            <span>
+              <RiCalendarLine className={styles.icon} />
+              {post.first_publication_date}
+            </span>
+            <span>
+              <RiUser3Line className={styles.icon} />
+              {post.data.author}
+            </span>
+            <span>
+              <AiOutlineClockCircle className={styles.icon} />
+              {readingTime} min
+            </span>
 
-              {section.body.map((paragraph, index) => (
-                <p key={index}>{paragraph.text}</p>
-              ))}
-            </section>
-          ))}
+            {post.data.content.map(section => (
+              <section key={section.heading}>
+                <h3>{section.heading}</h3>
+
+                {section.body.map((paragraph, index) => (
+                  <p key={index}>{paragraph.text}</p>
+                ))}
+              </section>
+            ))}
+          </article>
         </>
       )}
 
@@ -96,7 +113,7 @@ export default function Post({ post }: PostProps) {
   );
 }
 
-export const getStaticPaths = async () => {
+export const getStaticPaths: GetStaticPaths = async () => {
   return {
     paths: [
       { params: { slug: 'como-utilizar-hooks' } },
