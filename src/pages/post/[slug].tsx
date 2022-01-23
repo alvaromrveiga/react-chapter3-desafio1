@@ -1,4 +1,5 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { RiCalendarLine, RiUser3Line } from 'react-icons/ri';
 import { AiOutlineClockCircle } from 'react-icons/ai';
@@ -29,6 +30,7 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  preview: boolean;
 }
 
 const displayNone = {
@@ -37,7 +39,7 @@ const displayNone = {
   display: 'none',
 };
 
-export default function Post({ post }: PostProps) {
+export default function Post({ post, preview }: PostProps) {
   const [readingTime, setReadingTime] = useState(0);
 
   useEffect(() => {
@@ -108,6 +110,16 @@ export default function Post({ post }: PostProps) {
             ))}
 
             <Comments />
+
+            {preview && (
+              <aside>
+                <Link href="/api/exit-preview">
+                  <a className={commonStyles.exitPreview}>
+                    Sair do modo Preview
+                  </a>
+                </Link>
+              </aside>
+            )}
           </article>
         </>
       )}
@@ -129,11 +141,18 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps = async ({
+  params,
+  preview = false,
+  previewData,
+}) => {
   const { slug } = params;
 
   const prismic = getPrismicClient();
-  const response = await prismic.getByUID('posts', String(slug), {});
+
+  const response = await prismic.getByUID('posts', String(slug), {
+    ref: previewData?.ref ?? null,
+  });
 
   const post = {
     uid: response.uid,
@@ -142,6 +161,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   };
 
   return {
-    props: { post },
+    props: { post, preview },
   };
 };
