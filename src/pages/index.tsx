@@ -60,19 +60,7 @@ export default function Home({ postsPagination, preview }: HomeProps) {
     fetch(nextPage)
       .then(response => response.json())
       .then(data => {
-        const newPosts = data.results.map(post => {
-          return {
-            uid: post.uid,
-            first_publication_date: post.first_publication_date,
-            data: {
-              title: post.data.title,
-              subtitle: post.data.subtitle,
-              author: post.data.author,
-            },
-          };
-        });
-
-        setResults([...results, ...newPosts]);
+        setResults([...results, ...data.results]);
         setNextPage(data.next_page);
       });
   };
