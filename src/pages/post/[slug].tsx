@@ -3,8 +3,9 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { RiCalendarLine, RiUser3Line } from 'react-icons/ri';
 import { AiOutlineClockCircle } from 'react-icons/ai';
-import Header from '../../components/Header';
+import Prismic from '@prismicio/client';
 
+import Header from '../../components/Header';
 import { getPrismicClient } from '../../services/prismic';
 
 import styles from './post.module.scss';
@@ -12,6 +13,7 @@ import commonStyles from '../../styles/common.module.scss';
 import Comments from '../../components/Comments';
 
 interface Post {
+  uid: string;
   first_publication_date: string | null;
   data: {
     title: string;
@@ -30,6 +32,8 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  nextPost: Post;
+  prevPost: Post;
   preview: boolean;
 }
 
@@ -39,7 +43,7 @@ const displayNone = {
   display: 'none',
 };
 
-export default function Post({ post, preview }: PostProps) {
+export default function Post({ post, nextPost, prevPost, preview }: PostProps) {
   const [readingTime, setReadingTime] = useState(0);
 
   useEffect(() => {
@@ -109,6 +113,30 @@ export default function Post({ post, preview }: PostProps) {
               </section>
             ))}
 
+            <section className={styles.postNavigation}>
+              {prevPost ? (
+                <Link href={`/post/${prevPost.uid}`}>
+                  <a>
+                    <span>{prevPost.data.title}</span>
+                    <p>Post anterior</p>
+                  </a>
+                </Link>
+              ) : (
+                <span />
+              )}
+
+              {nextPost ? (
+                <Link href={`/post/${nextPost.uid}`}>
+                  <a>
+                    <span>{nextPost.data.title}</span>
+                    <p>Próximo post</p>
+                  </a>
+                </Link>
+              ) : (
+                <span />
+              )}
+            </section>
+
             <Comments />
 
             {preview && (
@@ -154,6 +182,27 @@ export const getStaticProps: GetStaticProps = async ({
     ref: previewData?.ref ?? null,
   });
 
+  const nextResponse = await prismic.query(
+    Prismic.Predicates.at('document.type', 'posts'),
+    {
+      pageSize: 1,
+      after: response?.id,
+      orderings: '[document.first_publication_date desc]',
+      ref: previewData?.ref ?? null,
+    }
+  );
+  const prevResponse = await prismic.query(
+    Prismic.Predicates.at('document.type', 'posts'),
+    {
+      pageSize: 1,
+      after: response?.id,
+      orderings: '[document.first_publication_date]',
+      ref: previewData?.ref ?? null,
+    }
+  );
+  const nextPost = nextResponse?.results[0] || null;
+  const prevPost = prevResponse?.results[0] || null;
+
   const post = {
     uid: response.uid,
     first_publication_date: response.first_publication_date,
@@ -161,6 +210,6 @@ export const getStaticProps: GetStaticProps = async ({
   };
 
   return {
-    props: { post, preview },
+    props: { post, preview, nextPost, prevPost },
   };
 };

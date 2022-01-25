@@ -50,3 +50,24 @@
     }
   }
 }
+
+.postNavigation {
+  display: flex;
+  border-top: 1px solid var(--body);
+  justify-content: space-between;
+  margin-bottom: 5rem;
+
+  span {
+    margin-top: 3rem;
+    color: var(--heading);
+    font-weight: 400;
+    font-size: 1.125rem;
+  }
+
+  p {
+    padding-top: 0.5rem;
+    color: var(--highlight);
+    font-weight: 600;
+    font-size: 1rem;
+  }
+}
