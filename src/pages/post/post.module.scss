@@ -29,6 +29,14 @@
     }
   }
 
+  .editedTime {
+    font-weight: 400;
+    font-style: italic;
+    font-size: 0.875rem;
+    margin-top: 1rem;
+    color: var(--info);
+  }
+
   .postContent {
     margin-top: 4rem;
     margin-bottom: 3rem;

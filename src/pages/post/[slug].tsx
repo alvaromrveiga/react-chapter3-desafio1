@@ -1,21 +1,19 @@
+import Prismic from '@prismicio/client';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { RiCalendarLine, RiUser3Line } from 'react-icons/ri';
 import { AiOutlineClockCircle } from 'react-icons/ai';
-import Prismic from '@prismicio/client';
-
+import { RiCalendarLine, RiUser3Line } from 'react-icons/ri';
+import Comments from '../../components/Comments';
 import Header from '../../components/Header';
 import { getPrismicClient } from '../../services/prismic';
-
-import styles from './post.module.scss';
 import commonStyles from '../../styles/common.module.scss';
-import Comments from '../../components/Comments';
-import { useUtterances } from '../../hooks/useUtterances';
+import styles from './post.module.scss';
 
 interface Post {
   uid: string;
   first_publication_date: string | null;
+  last_publication_date: string | null;
   data: {
     title: string;
     banner: {
@@ -46,6 +44,8 @@ const displayNone = {
 
 export default function Post({ post, nextPost, prevPost, preview }: PostProps) {
   const [readingTime, setReadingTime] = useState(0);
+  const [postPublicationDate, setPostPublicationDate] = useState('');
+  const [postEditedDate, setPostEditedDate] = useState('');
 
   useEffect(() => {
     if (post) {
@@ -63,6 +63,11 @@ export default function Post({ post, nextPost, prevPost, preview }: PostProps) {
 
       setReadingTime(Math.ceil(totalWordsCount / 200));
 
+      if (post.first_publication_date === post.last_publication_date) {
+        post.last_publication_date = null;
+        setPostEditedDate('');
+      }
+
       const formattedFirstPublicationDate = new Date(
         post.first_publication_date
       )
@@ -73,7 +78,30 @@ export default function Post({ post, nextPost, prevPost, preview }: PostProps) {
         })
         .replace(/de |\./g, '');
 
-      post.first_publication_date = formattedFirstPublicationDate;
+      setPostPublicationDate(formattedFirstPublicationDate);
+
+      if (post.last_publication_date) {
+        const formattedLastPublicationDate = new Date(
+          post.last_publication_date
+        )
+          .toLocaleDateString('pt-BR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          })
+          .replace(/de |\./g, '');
+
+        setPostEditedDate(
+          formattedLastPublicationDate.substring(0, 11) +
+            ', às ' +
+            formattedLastPublicationDate.substring(
+              11,
+              formattedLastPublicationDate.length
+            )
+        );
+      }
     }
   }, [post]);
 
@@ -93,7 +121,7 @@ export default function Post({ post, nextPost, prevPost, preview }: PostProps) {
             <h1>{post.data.title}</h1>
             <span>
               <RiCalendarLine className={styles.icon} />
-              {post.first_publication_date}
+              {postPublicationDate}
             </span>
             <span>
               <RiUser3Line className={styles.icon} />
@@ -103,6 +131,9 @@ export default function Post({ post, nextPost, prevPost, preview }: PostProps) {
               <AiOutlineClockCircle className={styles.icon} />
               {readingTime} min
             </span>
+            {postEditedDate && (
+              <p className={styles.editedTime}>* editado em {postEditedDate}</p>
+            )}
 
             {post.data.content.map(section => (
               <section key={section.heading} className={styles.postContent}>
@@ -209,6 +240,7 @@ export const getStaticProps: GetStaticProps = async ({
   const post = {
     uid: response.uid,
     first_publication_date: response.first_publication_date,
+    last_publication_date: response.last_publication_date,
     data: { ...response.data },
   };
 
