@@ -105,7 +105,7 @@ export default function Post({ post, nextPost, prevPost, preview }: PostProps) {
             </span>
 
             {post.data.content.map(section => (
-              <section key={section.heading}>
+              <section key={section.heading} className={styles.postContent}>
                 <h3>{section.heading}</h3>
 
                 {section.body.map((paragraph, index) => (
@@ -128,8 +128,10 @@ export default function Post({ post, nextPost, prevPost, preview }: PostProps) {
 
               {nextPost ? (
                 <Link href={`/post/${nextPost.uid}`}>
-                  <a>
-                    <span>{nextPost.data.title}</span>
+                  <a className={styles.nextPost}>
+                    <span className={styles.nextPost}>
+                      {nextPost.data.title}
+                    </span>
                     <p>Próximo post</p>
                   </a>
                 </Link>
