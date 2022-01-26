@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Inter', Arial, sans-serif;
 }
 
 :root {
@@ -27,14 +28,6 @@
 body {
   background: var(--background);
   color: var(--heading);
-}
-
-body,
-input,
-textarea,
-select,
-button {
-  font: 400 1rem 'Inter', sans-serif;
 }
 
 button {
