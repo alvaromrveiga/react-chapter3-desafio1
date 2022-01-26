@@ -11,6 +11,7 @@ import { getPrismicClient } from '../../services/prismic';
 import styles from './post.module.scss';
 import commonStyles from '../../styles/common.module.scss';
 import Comments from '../../components/Comments';
+import { useUtterances } from '../../hooks/useUtterances';
 
 interface Post {
   uid: string;
@@ -137,7 +138,7 @@ export default function Post({ post, nextPost, prevPost, preview }: PostProps) {
               )}
             </section>
 
-            <Comments />
+            <Comments commentNodeId={post.uid} />
 
             {preview && (
               <aside>

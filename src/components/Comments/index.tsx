@@ -1,8 +1,11 @@
 import { useUtterances } from '../../hooks/useUtterances';
 
-const commentNodeId = 'comments';
+// const commentNodeId = 'comments';
+interface CommentsProps {
+  commentNodeId?: string;
+}
 
-const Comments = () => {
+const Comments = ({ commentNodeId = 'comments' }: CommentsProps) => {
   useUtterances(commentNodeId);
   return <div id={commentNodeId} />;
 };
