@@ -1,6 +1,5 @@
 import { useUtterances } from '../../hooks/useUtterances';
 
-// const commentNodeId = 'comments';
 interface CommentsProps {
   commentNodeId?: string;
 }
